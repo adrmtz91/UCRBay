@@ -6,8 +6,6 @@
 
 import SwiftUI
 import Firebase
-
-// Make sure you're importing UIKit
 import UIKit
 
 // AppDelegate for additional setup, especially for Firebase
