@@ -46,11 +46,11 @@ struct ContentView: View {
                 }
                 .padding()
                 
-                NavigationLink(destination: HomeView(), isActive: $viewModel.isAuthenticated) {
-                    EmptyView()
+                .navigationDestination(isPresented: $viewModel.isAuthenticated) {
+                    HomeView()
                 }
                 .padding()
-                .navigationTitle("Login")
+                .navigationTitle("Login/Register")
             }
         }
     }
