@@ -102,6 +102,10 @@ struct ContentView: View {
                 .background(LinearGradient(gradient: Gradient(colors: [Color.blue, Color.blue.opacity(0.8)]), startPoint: .top, endPoint: .bottom))
                 .cornerRadius(10)
                 .shadow(radius: 5)
+
+                Button("Forgot Password") {
+                    viewModel.forgot(email: username)
+                }
                 
                 Button("Sign Up") {
                     showingRegistrationView = true
