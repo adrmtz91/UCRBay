@@ -9,53 +9,115 @@ struct ContentView: View {
     @State private var showingLoginError = false
     @State private var username: String = ""
     @State private var password: String = ""
+    @State private var showPassword = false
     
     var body: some View {
         NavigationStack {
             VStack {
-                Text("UCRBay")
+                Image("logoImage") // Assuming you've added a logo image
+                    .resizable()
+                    .scaledToFit()
+                    .padding(.top, 20)
+                Text(" Login")
                     .font(.largeTitle)
-                    .padding(.bottom, 20)
-                
+                    .fontWeight(.bold)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
                 TextField("Username", text: $username)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding()
+                    .background(Color.white)
+                    .cornerRadius(5)
+                    
+                    .padding(.horizontal, 10)
+                    .overlay(
+                        HStack {
+                            Image(systemName: "person.fill")
+                                .foregroundColor(.gray)
+                                .padding(.leading, 15)
+                            Spacer()
+                        }
+                    )
                 
-                SecureField("Password", text: $password)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding()
-                
+                if showPassword {
+                    TextField("Password", text: $password) // Use TextField for visible password
+                        .padding()
+                        .background(Color.orange)
+                        .cornerRadius(5)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 5)
+                                .stroke(Color.gray, lineWidth: 1)
+                        )
+                        .padding(.horizontal, 10)
+                        .overlay(
+                            HStack {
+                                Image(systemName: "lock.fill")
+                                    .foregroundColor(.gray)
+                                    .padding(.leading, 15)
+                                Spacer()
+                                Button(action: {
+                                    self.showPassword.toggle()
+                                }) {
+                                    Image(systemName: "eye.slash.fill")
+                                        .foregroundColor(.gray)
+                                        .padding(.trailing, 15)
+                                }
+                            }
+                        )
+                } else {
+                    SecureField("Password", text: $password) // SecureField for hidden password
+                        .padding()
+                        .background(Color.orange)
+                        .cornerRadius(5)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 5)
+                                .stroke(Color.gray, lineWidth: 4)
+                        )
+                        .padding(.horizontal, 10)
+                        .overlay(
+                            HStack {
+                                Image(systemName: "lock.fill")
+                                    .foregroundColor(.gray)
+                                    .padding(.leading, 15)
+                                Spacer()
+                                Button(action: {
+                                    self.showPassword.toggle()
+                                }) {
+                                    Image(systemName: "eye.fill")
+                                        .foregroundColor(.gray)
+                                        .padding(.trailing, 15)
+                                }
+                            }
+                        )
+                }
+                HStack {
+                        VStack { Divider() }
+                        Text("or")
+                        VStack { Divider() }
+                      }
                 Button("Login") {
                     viewModel.login(email: username, password: password)
                 }
                 .padding()
                 .foregroundColor(.white)
-                .background(Color.blue)
+                .background(LinearGradient(gradient: Gradient(colors: [Color.blue, Color.blue.opacity(0.8)]), startPoint: .top, endPoint: .bottom))
                 .cornerRadius(10)
-                .alert("Login Error", isPresented: $showingLoginError) {
-                    Button("OK", role: .cancel) { }
-                } message: {
-                    Text(viewModel.errorMessage ?? "An unknown error occurred")
-                }
+                .shadow(radius: 5)
                 
-                Button("Create Account") {
+                Button("Sign Up") {
                     showingRegistrationView = true
                 }
-                
-                .frame(minWidth: 0, maxWidth: .infinity)
-                .foregroundColor(.black)
+                .foregroundColor(.blue)
                 .padding()
-                .background(Color.yellow)
                 .cornerRadius(10)
                 .padding()
             }
-            .navigationTitle("Login/Register")
+            .navigationTitle("Welcome!")
             .navigationDestination(isPresented: $viewModel.isAuthenticated) {
-                    HomeView()
+                HomeView()
             }
             .navigationDestination(isPresented: $showingRegistrationView) {
-                    RegistrationView(isPresented: $showingRegistrationView)
-                        .environmentObject(viewModel)
+                RegistrationView(isPresented: $showingRegistrationView)
+                    .environmentObject(viewModel)
             }
             .alert("Login Error", isPresented: $showingLoginError) {
                 Button("OK", role: .cancel) {
@@ -65,8 +127,11 @@ struct ContentView: View {
             } message: {
                 Text(viewModel.errorMessage ?? "An unknown error occurred")
             }
-
         }
     }
 }
-
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
+}
