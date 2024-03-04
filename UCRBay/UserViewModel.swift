@@ -12,25 +12,39 @@ import Combine
 class UserViewModel: ObservableObject {
     @Published var isAuthenticated = false
     @Published var errorMessage: String?
+    @Published var shouldShowAlert = false
     
     private var user: User
     
+    var username: String {
+        return user.username
+    }
     init() {
         // Initialize the User object
-        self.user = User(userID: "", username: "", email: "", password: "", phoneNumber: 0, address: "")
+        self.user = User(firstName: "", lastName: "", userID: "",  username: "", email: "", password: "", phoneNumber: "", address: "")
     }
     
     // Register a new user
-    func register(email: String, password: String, username: String, phoneNumber: Int, address: String) {
+    func register(firstName: String, lastName: String, email: String, password: String, username: String, phoneNumber: String, address: String, completion: (() -> Void)? = nil) {
         Auth.auth().createUser(withEmail: email, password: password) { [weak self] authResult, error in
             DispatchQueue.main.async {
                 if let error = error {
                     self?.errorMessage = error.localizedDescription
-                    return
+                    self?.shouldShowAlert = true // Trigger the alert
+                    // If error, do not set isAuthenticated to true.
+                } else {
+                    // Set isAuthenticated to true only if registration is successful
+                    self?.isAuthenticated = true
+                    // Call completion handler if provided
+                    completion?()
                 }
                 
+                //Login user after successful regustration
+                self?.isAuthenticated = true
+                
                 // Update user model
-                self?.user = User(userID: authResult?.user.uid ?? "", username: username, email: email, password: password, phoneNumber: phoneNumber, address: address)
+                self?.user = User(firstName: authResult?.user.uid ?? "", lastName: firstName, userID: lastName, username: username, email: email, password: password, phoneNumber: phoneNumber, address: address)
+
                 
                 // Store additional user info in Firestore
                 self?.storeUserInfo()
@@ -63,7 +77,7 @@ class UserViewModel: ObservableObject {
     }
 
     // Update user profile
-    func updateProfile(username: String, phoneNumber: Int, address: String) {
+    func updateProfile(username: String, phoneNumber: String, address: String) {
         let db = Firestore.firestore()
 
         // Update local user model
@@ -113,6 +127,8 @@ class UserViewModel: ObservableObject {
     private func storeUserInfo() {
         let db = Firestore.firestore()
         db.collection("users").document(user.userID).setData([
+            "firstName": user.firstName,
+            "lastName": user.lastName,
             "username": user.username,
             "email": user.email,
             "phoneNumber": user.phoneNumber,

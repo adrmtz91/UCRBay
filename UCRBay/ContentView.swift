@@ -5,11 +5,13 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var viewModel = UserViewModel()
+    @State private var showingRegistrationView = false
+    @State private var showingLoginError = false
     @State private var username: String = ""
     @State private var password: String = ""
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack {
                 Text("UCRBay")
                     .font(.largeTitle)
@@ -30,28 +32,41 @@ struct ContentView: View {
                 .foregroundColor(.white)
                 .background(Color.blue)
                 .cornerRadius(10)
-                
-                if let errorMessage = viewModel.errorMessage {
-                    Text(errorMessage)
-                        .foregroundColor(.red)
+                .alert("Login Error", isPresented: $showingLoginError) {
+                    Button("OK", role: .cancel) { }
+                } message: {
+                    Text(viewModel.errorMessage ?? "An unknown error occurred")
                 }
                 
-                NavigationLink(destination: RegistrationView()) {
-                    Text("Create Account")
-                        .frame(minWidth: 0, maxWidth: .infinity)
-                        .foregroundColor(.black)
-                        .padding()
-                        .background(Color.yellow)
-                        .cornerRadius(10)
+                Button("Create Account") {
+                    showingRegistrationView = true
                 }
+                
+                .frame(minWidth: 0, maxWidth: .infinity)
+                .foregroundColor(.black)
                 .padding()
-                
-                .navigationDestination(isPresented: $viewModel.isAuthenticated) {
-                    HomeView()
-                }
+                .background(Color.yellow)
+                .cornerRadius(10)
                 .padding()
-                .navigationTitle("Login/Register")
             }
+            .navigationTitle("Login/Register")
+            .navigationDestination(isPresented: $viewModel.isAuthenticated) {
+                    HomeView()
+            }
+            .navigationDestination(isPresented: $showingRegistrationView) {
+                    RegistrationView(isPresented: $showingRegistrationView)
+                        .environmentObject(viewModel)
+            }
+            .alert("Login Error", isPresented: $showingLoginError) {
+                Button("OK", role: .cancel) {
+                    showingLoginError = false // Dismiss the alert
+                    viewModel.errorMessage = nil // Reset the error message
+                }
+            } message: {
+                Text(viewModel.errorMessage ?? "An unknown error occurred")
+            }
+
         }
     }
 }
+

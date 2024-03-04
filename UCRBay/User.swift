@@ -9,14 +9,18 @@ import FirebaseAuth
 import FirebaseFirestore
 
 class User {
+    var firstName: String
+    var lastName: String
     var userID: String
     var username: String
     var email: String
     var password: String
-    var phoneNumber: Int
+    var phoneNumber: String
     var address: String
 
-    init(userID: String, username: String, email: String, password: String, phoneNumber: Int, address: String) {
+    init(firstName: String, lastName: String, userID: String, username: String, email: String, password: String, phoneNumber: String, address: String) {
+        self.firstName = firstName
+        self.lastName = lastName
         self.userID = userID
         self.username = username
         self.email = email
@@ -84,6 +88,8 @@ class User {
     func storeUserInfo(completion: @escaping (Result<Bool, Error>) -> Void) {
         let db = Firestore.firestore()
         db.collection("users").document(self.userID).setData([
+            "firstName": self.firstName,
+            "lastName": self.lastName,
             "username": self.username,
             "email": self.email,
             "phoneNumber": self.phoneNumber,
