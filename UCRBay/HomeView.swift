@@ -1,45 +1,81 @@
-//  HomeView.swift
-//  UCRBay
-//
 import SwiftUI
-import Firebase
 
 struct HomeView: View {
-    @EnvironmentObject var userViewModel: UserViewModel
-    
+    let electronicsCategory = Category(name: "Electronics")
+    let booksCategory = Category(name: "Books")
+    let clothingCategory = Category(name: "Clothing")
+
+    let products: [Product]
+
+    init() {
+        products = [
+            Product(name: "Laptop", price: "$999", description: "A high-performance laptop with a sleek design.", category: electronicsCategory, imageName: "laptop"),
+            Product(name: "Book", price: "$19", description: "An interesting novel.", category: booksCategory, imageName: "book"),
+            Product(name: "T-Shirt", price: "$25", description: "A comfortable cotton T-shirt.", category: clothingCategory, imageName: "tshirt")
+        ]
+    }
+
     var body: some View {
-        VStack {
-            Text("Welcome to UCRBay, \(userViewModel.username)!")
-                .font(.title)
-                .padding()
-            
-            // Place holder for content not yet functional
+        NavigationView {
             ScrollView {
-                VStack {
-                    ForEach(0..<10) { item in
-                        Text("Item \(item)")
-                            .padding()
-                            .background(Color.gray.opacity(0.2))
-                            .cornerRadius(10)
-                            .padding(4)
+                VStack(alignment: .leading) {
+                    // Categories
+                    Text("Categories")
+                        .font(.headline)
+                        .padding(.horizontal)
+
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack {
+                            ForEach([electronicsCategory, booksCategory, clothingCategory], id: \.id) { category in
+                                Text(category.name)
+                                    .padding()
+                                    .background(Color.blue)
+                                    .foregroundColor(.white)
+                                    .cornerRadius(10)
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
+
+                    // Products
+                    Text("Featured Products")
+                        .font(.headline)
+                        .padding(.horizontal)
+
+                    ForEach(products) { product in
+                        ProductView(product: product)
                     }
                 }
             }
-            
-            Button("Log Out") {
-                userViewModel.logout()
-            }
-            .foregroundColor(.white)
-            .padding()
-            .background(Color.red)
-            .cornerRadius(10)
+            .navigationTitle("Home")
         }
-        .padding()
+
+        TabView {
+            InboxView()
+                .tabItem {
+                    Label("Inbox", systemImage: "envelope")
+                }
+
+            PostView()
+                .tabItem {
+                    Label("Post", systemImage: "plus.circle")
+                }
+
+            MyItemsView()
+                .tabItem {
+                    Label("My Items", systemImage: "bag")
+                }
+
+            UserView()
+                .tabItem {
+                    Label("User", systemImage: "person")
+                }
+        }
     }
 }
 
 struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
-        HomeView().environmentObject(UserViewModel())
+        HomeView()
     }
 }
