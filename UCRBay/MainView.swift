@@ -5,28 +5,25 @@ struct MainView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            switch selectedTab {
-            case 0:
-                HomeView()
-            case 1:
-                InboxView()
-            case 2:
-                PostView()
-            case 3:
-                MyItemsView()
-            case 4:
-                UserView()
-            default:
-                HomeView()
-            }
-            Spacer()
+            
             AppTabView(selectedTab: $selectedTab)
         }
     }
-}
-
-struct MainView_Previews: PreviewProvider {
-    static var previews: some View {
-        MainView()
+    
+    private var navigationTitle: String {
+        switch selectedTab {
+        case 0:
+            return "Home"
+        case 1:
+            return "Inbox"
+        case 2:
+            return "Post"
+        case 3:
+            return "My Items"
+        case 4:
+            return "User"
+        default:
+            return ""
+        }
     }
 }
