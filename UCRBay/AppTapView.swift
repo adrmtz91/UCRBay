@@ -4,31 +4,31 @@ struct AppTabView: View {
     @Binding var selectedTab: Int
     var body: some View {
         TabView(selection: $selectedTab) {
-            HomeView()
+            NavigationView{HomeView()}
                 .tabItem {
                     Label("Home", systemImage: "house")
                 }
                 .tag(0)
 
-            InboxView()
+            NavigationView{InboxView()}
                 .tabItem {
                     Label("Inbox", systemImage: "envelope")
                 }
                 .tag(1)
 
-            PostView()
+            NavigationView{PostView()}
                 .tabItem {
                     Label("Post", systemImage: "plus.circle")
                 }
                 .tag(2)
 
-            MyItemsView()
+            NavigationView{MyItemsView()}
                 .tabItem {
                     Label("My Items", systemImage: "bag")
                 }
                 .tag(3)
 
-            UserView()
+            NavigationView{UserView()}
                 .tabItem {
                     Label("User", systemImage: "person")
                 }
