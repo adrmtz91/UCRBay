@@ -12,7 +12,8 @@ class Category: Identifiable, ObservableObject {
     }
 
     func addProduct(_ product: Product) {
-        products.append(product)
-        product.category = self
+        if !self.products.contains(where: { $0.id == product.id }) {
+            self.products.append(product)
+        }
     }
 }
