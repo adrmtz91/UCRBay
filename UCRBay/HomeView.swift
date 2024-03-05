@@ -16,66 +16,41 @@ struct HomeView: View {
     }
 
     var body: some View {
-        NavigationView {
-            ScrollView {
-                VStack(alignment: .leading) {
-                    // Categories
-                    Text("Categories")
-                        .font(.headline)
-                        .padding(.horizontal)
+        ScrollView {
+            VStack(alignment: .leading) {
+                // Categories
+                Text("Categories")
+                    .font(.headline)
+                    .padding(.horizontal)
 
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack {
-                            ForEach([electronicsCategory, booksCategory, clothingCategory], id: \.id) { category in
-                                Text(category.name)
-                                    .padding()
-                                    .background(Color.blue)
-                                    .foregroundColor(.white)
-                                    .cornerRadius(10)
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack {
+                        ForEach([electronicsCategory, booksCategory, clothingCategory], id: \.id) { category in
+                            NavigationLink(destination: CategoryView(category: category)) {
+                                CategoryBoxView(category: category)
                             }
                         }
-                        .padding(.horizontal)
                     }
-
-                    // Products
-                    Text("Featured Products")
-                        .font(.headline)
-                        .padding(.horizontal)
-
-                    ForEach(products) { product in
-                        ProductView(product: product)
-                    }
+                    .padding(.horizontal)
                 }
+
+                // Products
+                Text("Featured Products")
+                    .font(.headline)
+                    .padding(.horizontal)
+
+                ProductListView(products: products)
             }
-            .navigationTitle("Home")
         }
-
-        TabView {
-            InboxView()
-                .tabItem {
-                    Label("Inbox", systemImage: "envelope")
-                }
-
-            PostView()
-                .tabItem {
-                    Label("Post", systemImage: "plus.circle")
-                }
-
-            MyItemsView()
-                .tabItem {
-                    Label("My Items", systemImage: "bag")
-                }
-
-            UserView()
-                .tabItem {
-                    Label("User", systemImage: "person")
-                }
-        }
+        .navigationTitle("Home")
     }
 }
 
 struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
-        HomeView()
+        NavigationView {
+            HomeView()
+        }
     }
 }
+
