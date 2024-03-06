@@ -10,6 +10,9 @@ struct ContentView: View {
     @State private var username: String = ""
     @State private var password: String = ""
     @State private var showPassword = false
+    @State private var showingForgotPasswordView = false
+    @State private var selectedTab = 0
+
     
     var body: some View {
         NavigationStack {
@@ -22,12 +25,12 @@ struct ContentView: View {
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .frame(maxWidth: .infinity, alignment: .leading)
-
+                
                 TextField("Username", text: $username)
                     .padding()
                     .background(Color.white)
                     .cornerRadius(5)
-                    
+                
                     .padding(.horizontal, 10)
                     .overlay(
                         HStack {
@@ -90,10 +93,10 @@ struct ContentView: View {
                         )
                 }
                 HStack {
-                        VStack { Divider() }
-                        Text("or")
-                        VStack { Divider() }
-                      }
+                    VStack { Divider() }
+                    Text("or")
+                    VStack { Divider() }
+                }
                 Button("Login") {
                     viewModel.login(email: username, password: password)
                 }
@@ -102,11 +105,14 @@ struct ContentView: View {
                 .background(LinearGradient(gradient: Gradient(colors: [Color.blue, Color.blue.opacity(0.8)]), startPoint: .top, endPoint: .bottom))
                 .cornerRadius(10)
                 .shadow(radius: 5)
-
-                Button("Forgot Password") {
-                    viewModel.forgot(email: username)
-                }
                 
+                Button("Forgot Password") {
+                    showingForgotPasswordView = true
+                }
+                .foregroundColor(.blue)
+                .padding()
+                .cornerRadius(10)
+                .padding()
                 Button("Sign Up") {
                     showingRegistrationView = true
                 }
@@ -117,19 +123,23 @@ struct ContentView: View {
             }
             .navigationTitle("Welcome!")
             .navigationDestination(isPresented: $viewModel.isAuthenticated) {
-                HomeView()
-            }
-            .navigationDestination(isPresented: $showingRegistrationView) {
-                RegistrationView(isPresented: $showingRegistrationView)
-                    .environmentObject(viewModel)
-            }
-            .alert("Login Error", isPresented: $showingLoginError) {
-                Button("OK", role: .cancel) {
-                    showingLoginError = false // Dismiss the alert
-                    viewModel.errorMessage = nil // Reset the error message
+                            AppTabView(selectedTab: $selectedTab)
+                    
+                    }
+                    .navigationDestination(isPresented: $showingRegistrationView) {
+                        RegistrationView(isPresented: $showingRegistrationView)
+                            .environmentObject(viewModel)
+                    }
+                    .alert("Login Error", isPresented: $showingLoginError) {
+                        Button("OK", role: .cancel) {
+                            showingLoginError = false // Dismiss the alert
+                            viewModel.errorMessage = nil // Reset the error message
+                        }
+                    } message: {
+                        Text(viewModel.errorMessage ?? "An unknown error occurred")
                 }
-            } message: {
-                Text(viewModel.errorMessage ?? "An unknown error occurred")
+                    .sheet(isPresented: $showingForgotPasswordView) {
+                                            ForgotPassView()
             }
         }
     }

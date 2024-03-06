@@ -11,7 +11,8 @@ struct TextFieldModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .textFieldStyle(RoundedBorderTextFieldStyle())
-            .padding()
+
+            .padding(.vertical, 5)
     }
 }
 

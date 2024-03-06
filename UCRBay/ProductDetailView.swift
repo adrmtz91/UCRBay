@@ -27,7 +27,7 @@ struct ProductDetailView: View {
                     .padding(.bottom, 2)
             }
             
-            Text("Category: \(product.category)")
+            Text("Category: (product.category)")
                 .font(.caption)
                 .foregroundColor(.gray)
         }
