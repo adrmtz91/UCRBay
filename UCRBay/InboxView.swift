@@ -23,7 +23,7 @@ struct InboxView: View {
             }
             .padding(.top, 10)
             .background(Color.white)
-            .cornerRadius(30, corners: [.topLeft, .topRight])
+            .cornerRadius(30)
                 
             MessageField()
                 .environmentObject(messagesManager)
