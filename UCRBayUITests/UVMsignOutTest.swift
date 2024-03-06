@@ -29,5 +29,12 @@ class UVMtsignOutTest: XCTestCase {
         
         XCTAssertNotNil(viewModel.errorMessage, "Error message should be set")
         XCTAssertEqual(viewModel.errorMessage, "Logout failed", "Error message should match the simulated error")
-  }
+    }
+    
+     func testLogoutWhenAlreadyLoggedOut() {
+        viewModel.isAuthenticated = false
+        viewModel.logout()
+        
+        XCTAssertFalse(viewModel.isAuthenticated, "Logout should have no effect when the user is already logged out")
+    }
 }
